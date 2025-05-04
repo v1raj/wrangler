@@ -1,0 +1,59 @@
+i have added the changes to the antlr file. Where do i now run mvn compile
+im going to give you the antlr file explain it to me: https://github.com/data-integrations/wrangler
+(a) Grammar Modi
+
+cation (wrangler-core/src/main/antlr4/.../Directives.g4):
+○ Add the lexer rules for BYTE_SIZE and TIME_DURATION (including helper
+fragments BYTE_UNIT, TIME_UNIT).
+○ Modify relevant parser rules (e.g., value, or create new speci
+
+c rules like
+byteSizeArg, timeDurationArg) to accept BYTE_SIZE and TIME_DURATION
+tokens where appropriate for directive arguments.
+○ Regenerate the ANTLR Java parser/lexer code using the appropriate build
+process (e.g., mvn compile). this is the question i have to solve on the antlr file i have given you
+Modify relevant parser rules (e.g., value, or create new speci
+
+c rules like
+byteSizeArg, timeDurationArg) to accept BYTE_SIZE and TIME_DURATION
+tokens where appropriate for directive arguments.
+○ Regenerate the ANTLR Java parser/lexer code using the appropriate build
+process (e.g., mvn compile). how do i solve these two parts
+(b) API Updates (wrangler-api module):
+○ Create new Java classes ByteSize.java and TimeDuration.java extending Token
+[wrangler-api/src/main/java/io/cdap/wrangler/api/parser/Token.java]
+
+■ These classes should parse the token string (e.g., "10KB", "150ms") in
+their constructor.
+■ Provide methods to retrieve the value in a canonical unit (e.g., long
+getBytes() for ByteSize)
+○ Add BYTE_SIZE and TIME_DURATION to the Token Types
+○ Update usage de
+
+nition and token de
+
+nition to support specifying these new
+
+token types as valid directive arguments.
+Add BYTE_SIZE and TIME_DURATION to the Token Types
+○ Update usage de
+
+nition and token de
+
+nition to support specifying these new
+
+token types as valid directive arguments. solve this part
+what does this whole wrangler project do im not getting the whole context 
+
+where do i have to define byteSizeArg and timeDurationarg
+
+BYTE_SIZE: Digit ('.' Digit)? BYTE_UNIT;
+TIME_DURATION: Digit ('.' Digit)? TIME_UNIT;
+
+
+fragment BYTE_UNIT : ('B' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB');
+fragment TIME_UNIT : ('ns' | 'us' | 'ms' | 's' | 'm' | 'h' | 'd') ;  this is how i have defined it
+
+where has the bytesize and timeduration token classes defined? and since i have defined it as BYTE_SIZE and TIME_DURATION in value how are these functions being added to ctx
+i cant access directivesparser can i know for sure that it will have visitValue function as the grammar automatically generates these functions
+how does the execute function get the summation of the values in the row without a for loop
