@@ -233,6 +233,8 @@ public final class UsageDefinition implements Serializable {
       currentOrdinal++;
       tokens.add(spec);
     }
+   
+
 
     /**
      * @return a instance of <code>UsageDefinition</code> object.

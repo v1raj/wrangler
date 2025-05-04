@@ -75,4 +75,17 @@ public class GrammarBasedParserTest {
     Assert.assertEquals(0, directives.size());
   }
 
+  @Test
+  public void testAggregateStatsValidSyntax() throws Exception {
+    String[] recipe = new String[] {
+      "#pragma version 2.0;",
+      "aggregate-stats :data_transfer_size :response_time :total_size_mb :total_time_sec"
+    
+    };
+
+    RecipeParser parser = TestingRig.parse(recipe);
+    List<Directive> directives = parser.parse();
+    Assert.assertEquals(1, directives.size());
+
+}
 }
