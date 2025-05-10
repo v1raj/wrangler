@@ -19,10 +19,14 @@ package io.cdap.directives.aggregates;
 import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
+
 import io.cdap.wrangler.api.Arguments;
 import io.cdap.wrangler.api.Directive;
 import io.cdap.wrangler.api.ExecutorContext;
 import io.cdap.wrangler.api.Row;
+import io.cdap.wrangler.api.annotations.Categories;
+import io.cdap.wrangler.api.parser.ByteSize;
+import io.cdap.wrangler.api.parser.TimeDuration;
 import io.cdap.wrangler.api.parser.TokenType;
 import io.cdap.wrangler.api.parser.UsageDefinition;
 
@@ -34,6 +38,7 @@ import java.util.List;
  */
 @Plugin(type = Directive.TYPE)
 @Name("aggregate-stats")
+@Categories(categories = { "Aggregate"})
 @Description("Aggregates byte size and time duration.")
 public class AggregateDirective implements Directive {
 
@@ -57,45 +62,41 @@ public class AggregateDirective implements Directive {
 
   @Override
   public void initialize(Arguments args) {
-    byteSizeColumn = args.value("byteSizeCol").toString();
-    timeDurationColumn = args.value("timeDurationCol").toString();
-    totalSizeColumn = args.value("totalSizeCol").toString();
-    totalTimeColumn = args.value("totalTimeCol").toString();
+    this.byteSizeColumn = args.value("byteSizeCol").value().toString();
+    this.timeDurationColumn = args.value("timeDurationCol").value().toString();
+    this.totalSizeColumn = args.value("totalSizeCol").value().toString();
+    this.totalTimeColumn = args.value("totalTimeCol").value().toString();
   }
-
-@Override
-public List<Row> execute(List<Row> rows, ExecutorContext context) {
+ 
+  @Override
+  public List<Row> execute(List<Row> rows, ExecutorContext context) {
   for (Row row : rows) {
-    Object sizeVal = row.getValue(byteSizeColumn);
-    Object timeVal = row.getValue(timeDurationColumn);
+    //Object sizeVal = row.getValue(this.byteSizeColumn);
+    //Object timeVal = row.getValue(this.timeDurationColumn);
+    ByteSize b = new ByteSize(row.getValue(this.byteSizeColumn).toString());
+    TimeDuration t = new TimeDuration(row.getValue(this.timeDurationColumn).toString());
 
-    if (sizeVal instanceof Number) {
-      totalBytes += ((Number) sizeVal).longValue();
-    }
+    System.out.println("Byte size columns:" + this.byteSizeColumn);
+    System.out.println("Size Value: " + row.getValue(this.byteSizeColumn));
+    
+      totalBytes += b.getBytes();
 
-    if (timeVal instanceof Number) {
-      totalNanos += ((Number) timeVal).longValue();
-    }
+      totalNanos += t.getMillis();
+    
   }
 
   // Prepare result row
   Row result = new Row();
   result.add(totalSizeColumn, totalBytes); 
   result.add(totalTimeColumn, totalNanos); 
-
+  System.out.println("Total Bytes: " + totalBytes + ", Total Nanos: " + totalNanos);
 
   return Collections.singletonList(result); // return result;
 }
-
-
-
-  public List<Row> finalize(ExecutorContext context) {
-    Row result = new Row();
-    result.add(totalSizeColumn, totalBytes);
-    result.add(totalTimeColumn, totalNanos);
-    return Collections.singletonList(result);
-  }
-
+  
+    
+  
+ 
   @Override
   public void destroy() {
     // nothing to clean up

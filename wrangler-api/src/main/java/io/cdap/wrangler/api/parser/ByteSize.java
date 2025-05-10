@@ -24,10 +24,10 @@ import com.google.gson.JsonPrimitive;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  * Token representing a byte size (e.g., 10KB, 5MB).
  */
+
 public class ByteSize implements Token {
   private final long bytes;
 

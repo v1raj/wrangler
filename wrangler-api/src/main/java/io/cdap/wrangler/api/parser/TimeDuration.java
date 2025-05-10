@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 /**
  * Token representing a time duration (e.g., 150ms, 3h).
  */
+
 public class TimeDuration implements Token {
   private final long millis;
 
